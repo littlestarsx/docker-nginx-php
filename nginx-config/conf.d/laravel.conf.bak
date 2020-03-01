@@ -1,0 +1,63 @@
+server {
+    listen 80;
+    server_name  laravel.com;
+    rewrite ^(.*)$ https://${server_name}$1 permanent;
+}
+
+server {
+    listen 443 ssl;
+    server_name laravel.com;
+    root    /var/www/laravel/public;
+    index   index.php index.html index.htm;
+    access_log  /var/log/nginx/laravel.access.log main;
+    error_log   /var/log/nginx/laravel.error.log notice;
+
+    #https
+    ssl_certificate /etc/nginx/ssl/fullchain.cer;
+    ssl_certificate_key /etc/nginx/ssl/laravel.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+    ssl_prefer_server_ciphers on;
+
+    error_page  500 502 503 504  /50x.html;
+    error_page  400 402 403 404  /40x.html;
+
+    location = /50x.html {
+        root  /etc/nginx/html;
+    }
+    location = /40x.html {
+        root  /etc/nginx/html;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass    unix:/var/run/php/php-fpm.sock;
+        fastcgi_index   index.php;
+        include fastcgi.conf;
+        fastcgi_split_path_info ^(.+\.php)(.*)$;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # 缓存
+    location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|mp4)$ {
+        expires 30d;
+    }
+
+    location ~ .*\.(js|css)?$ {
+        expires  12h;
+    }
+
+    location ~ /.well-known {
+        allow all;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}

@@ -17,7 +17,7 @@ RUN mkdir -p /var/tmp/client_body_temp && \
     #更新仓库
     apk update && \
     #安装基础工具
-    apk add --no-cache tzdata curl wget bash git vim openssh && \
+    apk add --no-cache tzdata curl wget bash git vim openssh openssl-dev && \
     #安装编译工具及odbc
     apk add --no-cache build-base unixodbc unixodbc-dev && \
     #-X获取指定仓库的包
@@ -32,7 +32,7 @@ RUN mkdir -p /var/tmp/client_body_temp && \
     #安装nginx及echo模块
     apk add --no-cache nginx nginx-mod-http-echo && \
     #安装PHP7及扩展
-    apk add --no-cache php7 php7-dev php7-fpm php7-common php7-pdo php7-pdo_mysql php7-mysqli php7-curl php7-gd php7-mcrypt php7-openssl php7-json php7-pear php7-phar php7-ctype php7-zip php7-zlib php7-iconv php7-amqp php7-redis php7-mbstring php7-tokenizer && \
+    apk add --no-cache php7 php7-dev php7-fpm php7-common php7-pdo php7-pdo_mysql php7-mysqli php7-curl php7-gd php7-mcrypt php7-openssl php7-json php7-pear php7-phar php7-ctype php7-zip php7-zlib php7-iconv php7-amqp php7-redis php7-mbstring php7-tokenizer php7-dom php7-simplexml php7-xmlwriter php7-sockets php7-fileinfo && \
     #安装composer
     php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.php');" && \
     php composer-setup.php && \
